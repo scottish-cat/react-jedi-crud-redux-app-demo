@@ -11,10 +11,16 @@ const PlanetsPage = () => {
 
     const handleBelovedStatus = id => {
         dispatch(changeBelovedStatus(id));
+        localStorage.setItem('planets', JSON.stringify(
+            planets.map(planet => planet.id === id ? {...planet, beloved: !planet.beloved} : planet))
+        );
     }
 
     const handleDelete = (id) => {
         dispatch(deletePlanet(id));
+        localStorage.setItem('planets', JSON.stringify(
+            planets.filter(planet => planet.id !== id)
+        ));
     }
 
     const getColumns = () => {

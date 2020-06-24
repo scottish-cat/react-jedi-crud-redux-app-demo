@@ -47,7 +47,17 @@ const StarshipsForm = ({history, match}) => {
             return;
         }
 
-        editMode ? dispatch(updateStarship(starshipData)) : dispatch(addStarship({...starshipData, beloved: false, id: nanoid()}));
+        if (editMode) {
+            dispatch(updateStarship(starshipData));
+            localStorage.setItem('starships', JSON.stringify(
+                starships.map(starship => starship.id === starshipData.id ? starshipData : starship))
+            );
+        } else {
+            const newStarship = {...starshipData, beloved: false, id: nanoid()};
+            dispatch(addStarship(newStarship));
+            localStorage.setItem('starships', JSON.stringify([...starships, newStarship]));
+        }
+
         history.goBack();
     }
 

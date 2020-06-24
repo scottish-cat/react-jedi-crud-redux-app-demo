@@ -47,7 +47,17 @@ const PlanetsForm = ({history, match}) => {
             return;
         }
 
-        editMode ? dispatch(updatePlanet(planetData)) : dispatch(addPlanet({...planetData, beloved: false, id: nanoid()}));
+        if (editMode) {
+            dispatch(updatePlanet(planetData));
+            localStorage.setItem('planets', JSON.stringify(
+                planets.map(planet => planet.id === planetData.id ? planetData : planet))
+            );
+        } else {
+            const newPlanet = {...planetData, beloved: false, id: nanoid()};
+            dispatch(addPlanet(newPlanet));
+            localStorage.setItem('planets', JSON.stringify([...planets, newPlanet]));
+        }
+
         history.goBack();
     }
 

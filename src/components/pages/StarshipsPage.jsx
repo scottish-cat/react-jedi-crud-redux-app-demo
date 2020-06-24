@@ -11,10 +11,16 @@ const StarshipsPage = () => {
 
     const handleBelovedStatus = id => {
         dispatch(changeBelovedStatus(id));
+        localStorage.setItem('starships', JSON.stringify(
+            starships.map(starship => starship.id === id ? {...starship, beloved: !starship.beloved} : starship))
+        );
     }
 
     const handleDelete = (id) => {
         dispatch(deleteStarship(id));
+        localStorage.setItem('starships', JSON.stringify(
+            starships.filter(starship => starship.id !== id)
+        ));
     }
 
     const getColumns = () => {

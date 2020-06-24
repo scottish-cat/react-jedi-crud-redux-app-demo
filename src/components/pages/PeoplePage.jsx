@@ -11,10 +11,17 @@ const PeoplePage = () => {
 
     const handleBelovedStatus = id => {
         dispatch(changeBelovedStatus(id));
+        localStorage.setItem('people', JSON.stringify(people.map((person) => {
+            return person.id === id ? {...person, beloved: !person.beloved} : person
+          }))
+        );
     }
 
-    const handleDelete = (id) => {
+    const handleDelete = id => {
         dispatch(deletePerson(id));
+        localStorage.setItem('people', JSON.stringify(
+            people.filter(person => person.id !== id)
+        ));
     }
 
     const getColumns = () => {

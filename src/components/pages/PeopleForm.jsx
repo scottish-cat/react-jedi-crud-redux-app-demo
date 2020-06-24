@@ -47,7 +47,17 @@ const PeopleForm = ({history, match}) => {
             return;
         }
 
-        editMode ? dispatch(updatePerson(personData)) : dispatch(addPerson({...personData, beloved: false, id: nanoid()}));
+        if (editMode) {
+            dispatch(updatePerson(personData));
+            localStorage.setItem('people', JSON.stringify(
+                people.map(person => person.id === personData.id ? personData : person))
+            );
+        } else {
+            const newPerson = {...personData, beloved: false, id: nanoid()};
+            dispatch(addPerson(newPerson));
+            localStorage.setItem('people', JSON.stringify([...people, newPerson]));
+        }
+
         history.goBack();
     }
 

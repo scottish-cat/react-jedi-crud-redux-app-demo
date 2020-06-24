@@ -3,7 +3,7 @@ import {Route, Switch, Redirect} from "react-router-dom";
 
 import "bootstrap/dist/css/bootstrap.css";
 
-import PeoplePage from "./components/pages/PeoplePage2";
+import PeoplePage from "./components/pages/PeoplePage";
 import PlanetsPage from "./components/pages/PlanetsPage";
 import StarshipsPage from "./components/pages/StarshipsPage";
 import PeopleForm from "./components/pages/PeopleForm";
@@ -23,20 +23,32 @@ import { setStarships } from './store/actions/starships';
 
 function App() {
     const dispatch = useDispatch();
+    const initialPeople = JSON.parse(localStorage.getItem('people'));
+    const initialPlanets = JSON.parse(localStorage.getItem('planets'));
+    const initialStarships = JSON.parse(localStorage.getItem('starships'));
 
     useEffect(() => {
-        async function fetchData() {
-            const peopleResponse = await getPeople()
+        async function fetchPeople() {
+            const peopleResponse = await getPeople();
             dispatch(setPeople(peopleResponse));
-
-            const planetsResponse = await getPlanets()
+            localStorage.setItem('people', JSON.stringify(peopleResponse));
+        }
+    
+        async function fetchPlanets() {
+            const planetsResponse = await getPlanets();
             dispatch(setPlanets(planetsResponse));
-
-            const starshipsResponse = await getStarships()
-            dispatch(setStarships(starshipsResponse));
+            localStorage.setItem('planets', JSON.stringify(planetsResponse));
         }
 
-        fetchData();
+        async function fetchStarships() {
+            const starshipsResponse = await getStarships();
+            dispatch(setStarships(starshipsResponse));
+            localStorage.setItem('starships', JSON.stringify(starshipsResponse));
+        }
+
+        initialPeople ? dispatch(setPeople(initialPeople)) : fetchPeople();
+        initialPlanets ? dispatch(setPlanets(initialPlanets)) : fetchPlanets();
+        initialStarships ? dispatch(setStarships(initialStarships)) : fetchStarships();
     }, [])
 
     return (
