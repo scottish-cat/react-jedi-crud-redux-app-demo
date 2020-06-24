@@ -1,17 +1,21 @@
 import React, {useEffect, useState} from 'react';
-import Input from "./common/Input";
-import Button from './common/Button';
-import {nanoid} from "nanoid";
+import Input from "../common/Input";
+import Button from '../common/Button';
+import { nanoid } from "nanoid";
 
-
-import {peopleColumns} from "../services/peopleService";
+import { useSelector, useDispatch } from 'react-redux';
+import { peopleColumns } from '../../services/peopleService';
+import { getAllPeople } from '../../store/selectors/people';
+import { addPerson, updatePerson } from '../../store/actions/people';
 
 const initialPersonData = peopleColumns.reduce((columns, columnName) => {
     columns[columnName] = '';
     return columns;
 }, {})
 
-const PeopleForm = ({setPeople, people, history, match}) => {
+const PeopleForm = ({history, match}) => {
+    const dispatch = useDispatch();
+    const people = useSelector(state => getAllPeople(state));
     const [formErrors, setFormErrors] = useState({});
     const [personData, setPersonData] = useState({...initialPersonData});
     const [editMode, setEditMode] = useState(false);
@@ -19,8 +23,8 @@ const PeopleForm = ({setPeople, people, history, match}) => {
     useEffect(() => {
         const personId = match.params.id;
         if (personId === "new") return;
-        const existingPersonData = people.find(person => person.id === personId)
-        setPersonData(existingPersonData)
+        const existingPersonData = people.filter(person => person.id === personId)[0];
+        setPersonData(existingPersonData);
         setEditMode(true);
     }, [])
 
@@ -43,13 +47,8 @@ const PeopleForm = ({setPeople, people, history, match}) => {
             return;
         }
 
-        if (editMode) {
-            const newPeopleList = people.map(person => person.id === personData.id ? personData : person);
-            setPeople(newPeopleList)
-        } else {
-            setPeople( people, {...personData, beloved: false, id: nanoid()});
-        }
-        history.push('/')
+        editMode ? dispatch(updatePerson(personData)) : dispatch(addPerson({...personData, beloved: false, id: nanoid()}));
+        history.goBack();
     }
 
     const handleChange = (event) => {

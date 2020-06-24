@@ -1,6 +1,6 @@
 import React from 'react';
 import {Link} from "react-router-dom";
-import Table from '../common/Table'
+import Table from '../common/Table';
 import { useSelector, useDispatch } from 'react-redux';
 import { getAllPeople } from '../../store/selectors/people';
 import { deletePerson, changeBelovedStatus } from '../../store/actions/people';
